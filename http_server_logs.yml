@@ -15,3 +15,4 @@
       src: '{{ item.path }}'
       dest: /tmp/logs
     with_items: '{{ logs.files }}'
+    # Playbook for fetching httpd service log files
