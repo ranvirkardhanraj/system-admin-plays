@@ -11,3 +11,4 @@
       comment: "{{ item.comment }}"
       uid: "{{item.uid }}"
     loop: "{{ users }}"
+# Playbook for adding users from users.yml file
