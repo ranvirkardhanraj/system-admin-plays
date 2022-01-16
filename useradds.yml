@@ -1,0 +1,13 @@
+---
+- name: 'Adding users from file'
+  hosts: ansible-node1.example.com
+  user: root
+  vars_files: users.yml
+  tasks:
+  - name: 'Adding users'
+    user:
+      name: "{{ item.name }}"
+      group: "{{ item.group }}"
+      comment: "{{ item.comment }}"
+      uid: "{{item.uid }}"
+    loop: "{{ users }}"

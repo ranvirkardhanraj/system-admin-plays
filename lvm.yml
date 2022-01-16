@@ -1,0 +1,69 @@
+---
+- name: 'LVM practice using block, rescue and alway'
+  hosts: ansible-node1.example.com
+  tasks:
+  - name: 'Executing block-rescue-always part'
+    block:
+    - name: 'Creating partition of /dev/sdb'
+      parted:
+        device: /dev/sdb
+        number: 1
+        state: present
+        part_end: 1GiB
+    - name: 'Creating mountpath'
+      file:
+        name: /data
+        state: directory
+    - name: 'Creating VG from /dev/sdb1'
+      lvg:
+        vg: vg1
+        pvs: /dev/sdb1
+    - name: 'Creating LV from /dev/vg1'
+      lvol:
+        vg: vg1
+        lv: lv1
+        size: 512M
+    - name: 'Adding file system to LV /dev/vg1/lv1'
+      filesystem:
+        fstype: ext4
+        dev: /dev/vg1/lv1
+    - name: 'Mounting LV to /data'
+      mount:
+        path: /data
+        src: /dev/vg1/lv1
+        fstype: ext4
+        state: present
+    rescue:
+    - name: 'Creating partition of /dev/sdb'
+      parted:
+        device: /dev/sdb
+        number: 1
+        state: present
+        part_end: 512MiB
+    - name: 'Creating mountpath'
+      file:
+        name: /data
+        state: directory
+    - name: 'Creating VG from /dev/sdb1'
+      lvg:
+        vg: vg1
+        pvs: /dev/sdb1
+    - name: 'Creating LV from /dev/vg1'
+      lvol:
+        vg: vg1
+        lv: lv1
+        size: 128M
+    - name: 'Adding file system to LV /dev/vg1/lv1'
+      filesystem:
+        fstype: ext4
+        dev: /dev/vg1/lv1
+    - name: 'Mounting LV to /data'
+      mount:
+        path: /data
+        src: /dev/vg1/lv1
+        fstype: ext4
+        state: present
+    always:
+    - name: 'Refreshing fstab entry'
+      command:
+        cmd: mount -av

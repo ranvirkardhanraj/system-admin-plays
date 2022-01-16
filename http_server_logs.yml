@@ -1,0 +1,17 @@
+---
+- name: 'Playbook for server log files'
+  hosts: nodes
+  tasks:
+
+  - name: 'Finding server log files'
+    find:
+      path: /var/log
+      patterns: '*.log,*_log'
+      recurse: yes
+    register: logs
+
+  - name: 'Fetching httpd log files'
+    fetch:
+      src: '{{ item.path }}'
+      dest: /tmp/logs
+    with_items: '{{ logs.files }}'

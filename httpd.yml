@@ -1,0 +1,29 @@
+---
+- name: 'Installing httpd service and start'
+  hosts: ansible-node1.example.com
+  tasks:
+  - name: 'Installing httpd'
+    yum:
+      name: httpd
+      state: latest
+  - name: 'Starting httpd'
+    service:
+      name: httpd
+      state: started
+      enabled: yes
+  - name: 'Allowing in firewall'
+    firewalld:
+      service: http
+      permanent: yes
+      state: enabled
+      immediate: yes
+  - name: 'Adding port No. 80 in firewall'
+    firewalld:
+      port: 80/tcp
+      permanent: yes
+      state: enabled
+      immediate: yes
+  - name: 'Copying source code in source code'
+    copy:
+      src: /home/ansible-admin/ansible/code
+      dest: /var/www/html

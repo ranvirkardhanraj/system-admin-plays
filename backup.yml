@@ -1,0 +1,19 @@
+---
+- name: 'All systems Backup'
+  hosts: nodes
+  user: root
+  become: yes
+  tasks:
+  - name: 'Creating backup of system configure'
+    archive:
+      path: /etc
+      dest: /tmp/backup.tar.gz
+      format: gz
+  - name: 'Fetching tar file from nodes'
+    fetch:
+      src: /tmp/backup.tar.gz
+      dest: /backup
+  - name: 'Deleting old tar file'
+    file:
+      name: /tmp/backup.tar.gz
+      state: absent
